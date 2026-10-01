@@ -1,4 +1,4 @@
-.counter {
+/* .counter {
   font-size: 16px;
   padding: 5px 10px;
   border-radius: 5px;
@@ -181,4 +181,54 @@
     right: 0;
     border-right-color: var(--border);
   }
+} */
+
+.page-title{
+  text-align:center;
+}
+
+input{
+  width:300px;
+  border:1px solid #ccc;
+  padding:8px;
+  border-radius:6px;
+}
+input:focus{
+  border-color:blue;
+}
+
+label{
+  margin-right:10px;
+}
+
+.input-row{
+  margin-bottom:10px;
+  display:flex;
+  align-items:center;
+}
+
+.analyze-button{
+  width:120px;
+  padding:8px 16px;
+  border-radius:8px;
+  background-color:#4f46e5;
+  color:white;
+  cursor:pointer;
+}
+
+
+.result-box{
+  border:1px solid #ccc;
+  padding:15px;
+  border-radius:8px;
+  margin-top:20px;
+}
+
+.error-message{
+  color:red;
+}
+
+.container{
+  max-width:600px;
+  margin:0 auto;
 }

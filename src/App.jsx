@@ -1,5 +1,6 @@
 import './App.css'
 import { useState } from 'react'
+import AnalysisResult from './AnalysisResult'
 function App() {
   const [skills,setSkills] = useState("") 
   const [requiredSkills,setRequiredSkills] = useState("")
@@ -9,25 +10,27 @@ function App() {
     rate:0
   })
   const [error,setError]=useState("")
+  const [loading,setLoading]=useState(false) 
   return (
-    <div>
-      <h1>AI Skill Analyzer</h1>
-      <div>
+    <div className = "container">
+      <h1 className = "page-title">AI Skill Analyzer</h1>
+      <div className = "input-row">
       <label>我的技能</label>
       <input 
       onChange = {(event)=>setSkills(event.target.value)}
       />
       </div>
-      <div>
+      <div className = "input-row">
       <label>岗位要求</label>
       <input 
       onChange = {(event) => setRequiredSkills(event.target.value)}
       />
       </div>
-      <button onClick={async() => {
+      <button className = "analyze-button" onClick={async() => {
+        setLoading(true)
         const data = {
-          user_skills: skills.split(","),
-          required_skills: requiredSkills.split(",")
+          user_skills: (skills.split(",").map(skill=>skill.trim())).filter((skill)=>skill !== ""),
+          required_skills: (requiredSkills.split(",").map(skill=>skill.trim())).filter((skill)=>skill !== "")
         }
         setError("")
         try{
@@ -43,30 +46,22 @@ function App() {
           throw new Error(`HTTP${response.status}`)
         }
         const responseData = await response.json()
-        setResult(responseData)}
+        setResult(responseData)
+        setLoading(false)}
         catch(error){
           setError("分析请求失败，请稍后重试")
+          setLoading(false)
         }
+      
       }
     }
-        >开始分析</button>
-      <h1>当前技能:</h1>
-      <h1>{skills}</h1>
-      <h1>岗位要求:</h1>
-      <h1>{requiredSkills}</h1>
-      <h2>匹配技能:</h2>
-      {
-        result.matched.map((skill)=><p key={skill}>{skill}</p>)
-      }
-      <h2>缺失技能:</h2>
-      {
-        result.missing.map((skill)=><p key={skill}>{skill}</p>)
-      }
-      <h2>匹配率:</h2>
-      {
-        (result.rate*100).toFixed(1)
-      }%
-      <p>{error}</p>
+        disabled={loading}>{loading ? "分析中..." : "开始分析"}</button>
+      <h2>当前技能:</h2>
+      <h3>{skills}</h3>
+      <h2>岗位要求:</h2>
+      <h3>{requiredSkills}</h3>
+      <AnalysisResult result={result} />
+      <p className = "error-message">{error}</p>
     </div>
     
   )
