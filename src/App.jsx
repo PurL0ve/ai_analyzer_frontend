@@ -41,9 +41,9 @@ function App() {
         const responseData = await response.json()
         setHasAnalyzed(true)
         setResult(responseData)
-        setLoading(false)}
-        catch(error){
+      }catch(error){
           setError("分析请求失败，请稍后重试")
+        }finally{
           setLoading(false)
         }
       }
