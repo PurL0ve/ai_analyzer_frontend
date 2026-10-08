@@ -18,6 +18,7 @@ function App() {
     const requiredSkillsList = requiredSkills.split(",").map(skill=>skill.trim()).filter((skill)=>skill !== "")
     if(userSkills.length === 0 || requiredSkillsList.length === 0){
       setError("我的技能为空或者岗位要求为空")
+      setHasAnalyzed(false)
       return
     }
     setLoading(true)
@@ -43,6 +44,7 @@ function App() {
         setResult(responseData)
       }catch(error){
           setError("分析请求失败，请稍后重试")
+          setHasAnalyzed(false)
         }finally{
           setLoading(false)
         }
