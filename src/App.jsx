@@ -4,6 +4,7 @@ import AnalysisResult from './AnalysisResult'
 function App() {
   const [skills,setSkills] = useState("") 
   const [requiredSkills,setRequiredSkills] = useState("")
+  const [position,setPosition] = useState("")
   const [result,setResult] = useState({
     matched:[],
     missing:[],
@@ -16,15 +17,16 @@ function App() {
   async function handleAnalyze(){
     const userSkills = skills.split(",").map(skill=>skill.trim()).filter((skill)=>skill !== "")
     const requiredSkillsList = requiredSkills.split(",").map(skill=>skill.trim()).filter((skill)=>skill !== "")
-    if(userSkills.length === 0 || requiredSkillsList.length === 0){
-      setError("我的技能为空或者岗位要求为空")
+    if(userSkills.length === 0 || requiredSkillsList.length === 0 || position.trim() === ""){
+      setError("请填写岗位名称、我的技能和岗位要求")
       setHasAnalyzed(false)
       return
     }
     setLoading(true)
         const data = {
           user_skills: userSkills,
-          required_skills: requiredSkillsList
+          required_skills: requiredSkillsList,
+          position: position
         }
         setError("")
         try{
@@ -41,7 +43,7 @@ function App() {
         }
         const responseData = await response.json()
         setHasAnalyzed(true)
-        setResult(responseData)
+        setResult(responseData.data)
       }catch(error){
           setError("分析请求失败，请稍后重试")
           setHasAnalyzed(false)
@@ -54,6 +56,13 @@ function App() {
   return (
     <div className = "container">
       <h1 className = "page-title">AI Skill Analyzer</h1>
+      <div className = "input-row">
+      <label>岗位名称</label>
+      <input
+      value = {position}
+      onChange = {(event) => setPosition(event.target.value)}
+      />
+      </div>
       <div className = "input-row">
       <label>我的技能</label>
       <input
