@@ -5,6 +5,7 @@ function App() {
   const [skills,setSkills] = useState("") 
   const [requiredSkills,setRequiredSkills] = useState("")
   const [position,setPosition] = useState("")
+  const [histories,setHistories] = useState([])
   const [result,setResult] = useState({
     matched:[],
     missing:[],
@@ -13,6 +14,9 @@ function App() {
   const [error,setError]=useState("")
   const [loading,setLoading]=useState(false) 
   const [hasAnalyzed,setHasAnalyzed]=useState(false)
+  const [historyError,setHistoryError]=useState("")
+  const [hasLoadedHistory,setHasLoadedHistory]=useState(false)
+  const [historyLoading,setHistoryLoading]=useState(false)
 
   async function handleAnalyze(){
     const userSkills = skills.split(",").map(skill=>skill.trim()).filter((skill)=>skill !== "")
@@ -38,6 +42,7 @@ function App() {
             body: JSON.stringify(data)
           }
         )
+        console.log("HTTP状态码：", response.status, "是否成功：", response.ok)
         if (!response.ok){
           throw new Error(`HTTP${response.status}`)
         }
@@ -51,6 +56,24 @@ function App() {
           setLoading(false)
         }
       }
+  async function handleLoadHistory(){
+    setHistoryError("")
+    setHistoryLoading(true)
+    try{
+      const response = await fetch("http://127.0.0.1:8000/history")
+      if(!response.ok){
+        throw new Error(`HTTP${response.status}`)
+      }
+      const responseData = await response.json()
+      setHistories(responseData.data)
+      setHasLoadedHistory(true)
+    }catch(error){
+      setHistoryError("加载历史记录失败，请稍后重试")
+      console.error("加载历史记录失败:", error)
+    }finally{
+      setHistoryLoading(false)
+    }
+  }
 
 
   return (
@@ -80,12 +103,25 @@ function App() {
       <button className = "analyze-button" onClick={() =>handleAnalyze()} disabled={loading}>
         {loading ? "分析中..." : "开始分析"}
       </button>
+      <button onClick = {() => handleLoadHistory()} disabled={historyLoading}>
+        {historyLoading ? "加载中..." : "加载历史"}
+      </button>
+      {hasLoadedHistory && <p>已加载历史记录：{histories.length} 条</p>}
+      {hasLoadedHistory && histories.length === 0 && <p>暂无历史记录</p>}
+      <ul>
+        {histories.map((history) => (
+        <li key = {history.id}>
+          {history.position}-{(history.rate * 100).toFixed(1)}%-(编号：{history.id})
+        </li> 
+        ))}
+      </ul>
       <h2>当前技能:</h2>
       <h3>{skills}</h3>
       <h2>岗位要求:</h2>
       <h3>{requiredSkills}</h3>
       {hasAnalyzed && <AnalysisResult result={result} />}
       <p className = "error-message">{error}</p>
+      <p className = "error-message">{historyError}</p>
     </div>
     
   )

@@ -1,16 +1,69 @@
-# React + Vite
+# AI Skill Analyzer 前端
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+基于 React 和 Vite 的技能匹配页面，配合 FastAPI 后端使用。当前通过规则匹配计算技能匹配率，尚未接入大模型。
 
-Currently, two official plugins are available:
+## 当前功能
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- 输入岗位名称、本人技能和岗位要求，提交分析并展示匹配/缺失技能与匹配率。
+- 手动加载历史记录，展示岗位名称、保留一位小数的匹配率和记录编号。
+- 历史查询支持加载中禁用按钮、失败提示与重试、成功返回空列表时的提示。
 
-## React Compiler
+## 环境与依赖
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+本机检查到的工具版本：Node.js `22.19.0`、npm `10.9.3`。项目依赖声明在 `package.json`，具体安装版本由 `package-lock.json` 记录。
 
-## Expanding the ESLint configuration
+在 Windows PowerShell 中进入前端目录，其他存放位置请替换路径：
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```powershell
+cd D:\ai_analyzer_frontend
+node --version
+npm --version
+```
+
+首次准备新环境，或需要按锁文件重新安装依赖时执行：
+
+```powershell
+npm ci
+```
+
+`npm ci` 按锁文件安装依赖，并会替换已有的 `node_modules`。现有依赖可用时，日常启动无需重复安装。本项目尚未完成全新环境安装验证。
+
+## 启动与前后端连接
+
+1. 先按后端项目的 README 准备 MySQL、数据库连接和 Python 环境，再启动后端。当前本机后端目录为 `D:\ai_analyzer`。
+2. 另开一个终端，在前端目录执行：
+
+```powershell
+npm run dev -- --port 5173 --strictPort
+```
+
+3. 浏览器打开 `http://localhost:5173`，保持前后端两个终端运行。需要停止对应服务时，在该终端按 `Ctrl+C`。
+
+固定5173端口并在占用时停止启动，是为了与当前后端跨域配置一致。若提示端口占用，先确认是否已有本项目运行，不能直接停止未知进程或换端口后忽略跨域设置。
+
+当前前端源码使用以下后端地址：
+
+- `POST http://127.0.0.1:8000/analyze`：分析并保存。
+- `GET http://127.0.0.1:8000/history`：查询历史。
+
+当前后端允许的前端来源为 `http://localhost:5173`。前端页面请使用这个地址；`http://127.0.0.1:5173` 属于不同来源。后端地址仍可使用源码中的 `127.0.0.1:8000`。
+
+## 最小运行检查
+
+1. 填写岗位名称，本人技能输入 `python`，岗位要求输入 `python,sql`。技能之间使用英文逗号。
+2. 点击“开始分析”，预期匹配技能为 `python`、缺失技能为 `sql`、匹配率为 `50.0%`。
+3. 点击“加载历史”，核对刚保存的岗位、匹配率和编号。新记录暂不自动刷新到列表，需要手动加载。
+4. 首次进入尚未加载时，不显示已加载条数；查询失败时应显示错误并恢复按钮。已有列表可能保留此前成功加载的数据，不代表最近一次请求成功。
+
+空列表的页面提示已用前端临时空数组做过指导练习，不能把它当作后端真实空库响应的联调证据。
+
+## 构建与检查命令
+
+```powershell
+npm run build
+npm run lint
+```
+
+构建产物位于 `dist`。构建通过不等于浏览器联调、全新环境安装或发布验收通过。
+
+`npm run preview` 用于本地预览构建产物；预览端口与当前跨域来源可能不一致，不能直接替代上述开发启动流程。公开发布前需另行配置接口地址、跨域和相应服务。
