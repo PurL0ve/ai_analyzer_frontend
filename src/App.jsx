@@ -103,9 +103,14 @@ function App() {
       <button className = "analyze-button" onClick={() =>handleAnalyze()} disabled={loading}>
         {loading ? "分析中..." : "开始分析"}
       </button>
-      <button onClick = {() => handleLoadHistory()} disabled={historyLoading}>
+      <p className = "error-message">{error}</p>
+      {hasAnalyzed && <AnalysisResult result={result} />}
+      <section className = "history-section">
+        <h2>历史记录</h2>
+      <button className = "history-button" onClick = {() => handleLoadHistory()} disabled={historyLoading}>
         {historyLoading ? "加载中..." : "加载历史"}
       </button>
+      <p className = "error-message">{historyError}</p>
       {hasLoadedHistory && <p>已加载历史记录：{histories.length} 条</p>}
       {hasLoadedHistory && histories.length === 0 && <p>暂无历史记录</p>}
       <ul>
@@ -115,13 +120,7 @@ function App() {
         </li> 
         ))}
       </ul>
-      <h2>当前技能:</h2>
-      <h3>{skills}</h3>
-      <h2>岗位要求:</h2>
-      <h3>{requiredSkills}</h3>
-      {hasAnalyzed && <AnalysisResult result={result} />}
-      <p className = "error-message">{error}</p>
-      <p className = "error-message">{historyError}</p>
+      </section>
     </div>
     
   )

@@ -11,9 +11,10 @@ function AnalysisResult(props){
       result.missing.map((skill)=><p key = {skill}>{skill}</p>)
       }
       <h2>匹配率:</h2>
-      {
-      (result.rate * 100).toFixed(1)
-      }%
+      <p className = "match-rate">
+        { (result.rate * 100).toFixed(1)
+        }%
+      </p>
       </div>
   )
 }

@@ -185,13 +185,18 @@
 
 .page-title{
   text-align:center;
+  font-size:32px;
+  line-height:1.2;
+  margin:0 0 28px;
+  color:#1f2937;
 }
 
 input{
-  width:300px;
   border:1px solid #ccc;
   padding:8px;
   border-radius:6px;
+  flex:1; /* 占满剩余空间 */
+  min-width:0; /* 确保输入框宽度自适应 */
 }
 input:focus{
   border-color:blue;
@@ -199,10 +204,12 @@ input:focus{
 
 label{
   margin-right:10px;
+  width:80px;
+  flex-shrink:0;
 }
 
 .input-row{
-  margin-bottom:10px;
+  margin-bottom:20px;
   display:flex;
   align-items:center;
 }
@@ -211,24 +218,88 @@ label{
   width:120px;
   padding:8px 16px;
   border-radius:8px;
+    font-size: 14px;
   background-color:#4f46e5;
   color:white;
   cursor:pointer;
+  margin-right:12px;
+}
+.history-button{
+  width:120px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color:#f3f4f6;
+  color:#374151;
+  cursor:pointer; /* 鼠标悬停时显示为指针 */
+  border:1px solid #d1d5db;
 }
 
-
 .result-box{
-  border:1px solid #ccc;
-  padding:15px;
-  border-radius:8px;
+  border:1px solid #e5e7eb;
+  padding:24px;
+  border-radius:12px;
   margin-top:20px;
+  background-color:#f8fafc;
+  text-align:left;
+}
+.result-box h2{
+  font-size:18px;
+  color:#1f2937;
+  margin:16px 0 8px;
 }
 
 .error-message{
   color:red;
 }
 
-.container{
-  max-width:600px;
-  margin:0 auto;
+.container {
+  width: 100%;  /* 占满父容器宽度 */
+  max-width: 760px;  /* 最大宽度 */
+  box-sizing: border-box; /* 包含内边距和边框在宽度内 */
+  margin: 40px auto;  /* 居中 */
+  padding: 32px;  /* 内边距 */
+  background: #ffffff; /* 背景颜色 */
+  color: #1f2937;  /* 文字颜色 */
+  border: 1px solid #e5e7eb;  /* 边框 */
+  border-radius: 20px;  /* 圆角 */
+  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.06); /* 阴影 */
+  color-scheme: light; /* 允许在浅色模式下使用 */
+}
+
+button:disabled{
+  opacity:0.6;
+  cursor:not-allowed;
+}
+
+.history-section{
+  margin-top:28px;
+  padding-top:24px;
+  border-top:1px solid #e5e7eb;
+  text-align:left;
+}
+
+.history-section h2{
+  font-size:20px;
+  color:#1f2937;
+  margin-bottom:16px;
+}
+
+.history-section ul{
+  list-style:none;
+  padding:0;
+  margin:16px 0 0;
+  max-height:360px;
+  overflow-y:auto;
+}
+.history-section li{
+  background-color:#f8fafc;
+  padding:12px 16px;
+  border-radius:8px;
+  margin-bottom:10px;
+}
+.match-rate{
+  font-size:32px;
+  color:#4f46e5;
+  font-weight:700;
 }
