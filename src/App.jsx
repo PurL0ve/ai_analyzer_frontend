@@ -26,6 +26,7 @@ function App() {
       setHasAnalyzed(false)
       return
     }
+    setHasAnalyzed(false)
     setLoading(true)
         const data = {
           user_skills: userSkills,
@@ -83,21 +84,33 @@ function App() {
       <label>岗位名称</label>
       <input
       value = {position}
-      onChange = {(event) => setPosition(event.target.value)}
+      onChange = {(event) => {
+        setPosition(event.target.value)
+        setHasAnalyzed(false)
+      }}
+      disabled={loading}
       />
       </div>
       <div className = "input-row">
       <label>我的技能</label>
       <input
       value={skills}
-      onChange = {(event)=>setSkills(event.target.value)}
+      onChange = {(event)=>{
+        setSkills(event.target.value)
+        setHasAnalyzed(false)
+      }}
+      disabled={loading}
       />
       </div>
       <div className = "input-row">
       <label>岗位要求</label>
       <input
       value={requiredSkills}
-      onChange = {(event) => setRequiredSkills(event.target.value)}
+      onChange = {(event) => {
+        setRequiredSkills(event.target.value)
+        setHasAnalyzed(false)
+      }}
+      disabled={loading}
       />
       </div>
       <button className = "analyze-button" onClick={() =>handleAnalyze()} disabled={loading}>
