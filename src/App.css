@@ -303,3 +303,6 @@ button:disabled{
   color:#4f46e5;
   font-weight:700;
 }
+.history-button + .history-button {
+  margin-left: 12px;
+}

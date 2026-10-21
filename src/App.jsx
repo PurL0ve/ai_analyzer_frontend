@@ -17,6 +17,7 @@ function App() {
   const [historyError,setHistoryError]=useState("")
   const [hasLoadedHistory,setHasLoadedHistory]=useState(false)
   const [historyLoading,setHistoryLoading]=useState(false)
+  const [showHistory, setShowHistory] = useState(false)
 
   async function handleAnalyze(){
     const userSkills = skills.split(",").map(skill=>skill.trim()).filter((skill)=>skill !== "")
@@ -68,6 +69,7 @@ function App() {
       const responseData = await response.json()
       setHistories(responseData.data)
       setHasLoadedHistory(true)
+      setShowHistory(true)
     }catch(error){
       setHistoryError("加载历史记录失败，请稍后重试")
       console.error("加载历史记录失败:", error)
@@ -123,16 +125,28 @@ function App() {
       <button className = "history-button" onClick = {() => handleLoadHistory()} disabled={historyLoading}>
         {historyLoading ? "加载中..." : "加载历史"}
       </button>
+      {hasLoadedHistory && (
+        <button className = "history-button" onClick={() => setShowHistory(!showHistory)}>
+        {showHistory ? "收起历史" : "展开历史"}
+      </button>
+      )}
       <p className = "error-message">{historyError}</p>
-      {hasLoadedHistory && <p>已加载历史记录：{histories.length} 条</p>}
-      {hasLoadedHistory && histories.length === 0 && <p>暂无历史记录</p>}
-      <ul>
-        {histories.map((history) => (
-        <li key = {history.id}>
-          {history.position}-{(history.rate * 100).toFixed(1)}%-(编号：{history.id})
-        </li> 
+      {showHistory && hasLoadedHistory && (
+      <div>
+        <p>已加载历史记录：{histories.length} 条</p>
+
+        {histories.length === 0 && <p>暂无历史记录</p>}
+
+        <ul>
+        {histories.map((history,index) => (
+            <li key={history.id}>
+            {history.position}-{(history.rate * 100).toFixed(1)}%
+            -(编号：{index+1})
+          </li>
         ))}
-      </ul>
+        </ul>
+      </div>
+    )}
       </section>
     </div>
     
