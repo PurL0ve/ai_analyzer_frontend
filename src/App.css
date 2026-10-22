@@ -191,16 +191,22 @@
   color:#1f2937;
 }
 
-input{
+input,textarea{
   border:1px solid #ccc;
   padding:8px;
   border-radius:6px;
   flex:1; /* 占满剩余空间 */
   min-width:0; /* 确保输入框宽度自适应 */
 }
-input:focus{
+input:focus,textarea:focus{
   border-color:blue;
 }
+textarea{
+  min-height:120px;
+  resize:vertical;
+  font: inherit;
+}
+
 
 label{
   margin-right:10px;
