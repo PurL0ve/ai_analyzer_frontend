@@ -94,6 +94,11 @@ function App() {
       setHasAnalyzed(false)
       return
     }
+    if(position.trim() === ""){
+      setError("请填写岗位名称")
+      setHasAnalyzed(false)
+      return
+    }
     setHasAnalyzed(false)
     setLoading(true)
     setError("")
@@ -106,14 +111,21 @@ function App() {
         },
         body: JSON.stringify({
           user_skills: userSkills,
-          jd: jd
+          jd: jd,
+          position: position
         },
         )
       }
       )
 
       if(!response.ok){
-        throw new Error(`HTTP${response.status}`)
+        const errorData = await response.json()
+        const message = errorData.detail
+        if(typeof message === "string" && message.trim() !== "")
+          setError(message)
+        else
+          setError("JD分析请求失败，请稍后重试")
+        return
       }
 
       const responseData = await response.json()
@@ -258,6 +270,7 @@ function App() {
                 <li key={history.id}>
                   {history.position}-{(history.rate * 100).toFixed(1)}%
                   -(编号：{index + 1})
+                  来源:{history.source === "manual" ? "手动输入分析" : history.source === "jd" ? "JD提取分析" : "历史未标记"}
                 </li>
               ))}
             </ul>
