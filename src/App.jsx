@@ -131,7 +131,10 @@ function App() {
       const responseData = await response.json()
 
       setHasAnalyzed(true)
-      setResult(responseData.data)
+      setResult({
+        ...responseData.data,
+        submittedJD:jd
+      })
   }catch(error){
     setError("JD分析请求失败，请稍后重试")
     setHasAnalyzed(false)
