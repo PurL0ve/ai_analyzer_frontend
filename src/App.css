@@ -241,6 +241,11 @@ label{
   border:1px solid #d1d5db;
 }
 
+.jd-candidate,
+.jd-source-line{
+  white-space:pre-wrap;
+}
+
 .result-box{
   border:1px solid #e5e7eb;
   padding:24px;

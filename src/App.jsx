@@ -1,6 +1,7 @@
 import './App.css'
 import { useState } from 'react'
 import AnalysisResult from './AnalysisResult'
+import { findJdCandidate } from "./jdCandidates"
 
 function App() {
   const [skills, setSkills] = useState("")
@@ -20,6 +21,7 @@ function App() {
   const [historyLoading, setHistoryLoading] = useState(false)
   const [showHistory, setShowHistory] = useState(false)
   const [jd, setJd] = useState("")
+  const [originalExtractedSkills, setOriginalExtractedSkills] = useState(null)
 
   async function handleAnalyze() {
     const userSkills = skills
@@ -165,7 +167,45 @@ function App() {
       setHistoryLoading(false)
     }
   }
+  async function handleExtractJD() {
+    if (jd.trim() === "") {
+      setError("请填写岗位描述")
+      return
+    }
 
+    setError("")
+    setHasAnalyzed(false)
+    setLoading(true)
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/extract-jd", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jd })
+      })
+      const responseData = await response.json()
+
+      if (!response.ok) {
+        const detail = responseData.detail
+        setError(typeof detail === "string" && detail.trim() !== ""
+          ? detail
+          : "技能提取失败，请稍后重试")
+        return
+      }
+
+      const extractedSkills = responseData.data.required_skills
+      setOriginalExtractedSkills(extractedSkills)
+      setRequiredSkills(extractedSkills.join(","))
+      if (extractedSkills.length === 0) {
+        setError("未提取到技能，请手动填写岗位要求")
+      }
+    } catch {
+      setError("技能提取请求失败，请稍后重试")
+    } finally {
+      setLoading(false)
+    }
+  }
+  const jdLines = jd.split(/\r?\n/)
 
   return (
     <div className="container">
@@ -201,6 +241,7 @@ function App() {
           value={jd}
           onChange={(event) => {
             setJd(event.target.value)
+            setOriginalExtractedSkills(null)
             setHasAnalyzed(false)
           }
           }
@@ -219,6 +260,26 @@ function App() {
           disabled={loading}
         />
       </div>
+      
+      {originalExtractedSkills !== null && (
+        <div>
+          <p>原始提取技能</p>
+          {originalExtractedSkills.length === 0 && <p>未提取到技能</p>}
+
+          {originalExtractedSkills.map((skill, index) => {
+            const candidate = findJdCandidate(jdLines, skill)
+
+            return (
+              <p key={index}>
+                {skill}
+                <span className="jd-candidate">
+                  {" · "}{candidate ? `第 ${candidate.lineNumber} 行 · ${candidate.text}` : "未找到原文候选"}
+                </span>
+              </p>
+            )
+          })}
+        </div>
+      )}
 
       <button
         className="analyze-button"
@@ -236,10 +297,24 @@ function App() {
         {loading ? "分析中.." : "从JD分析"}
       </button>
 
+      <button
+        type="button"
+        className="analyze-button"
+        onClick={handleExtractJD}
+        disabled={loading}
+      >
+        先提取技能
+      </button>
+
       <p className="error-message">{error}</p>
 
       {hasAnalyzed && <AnalysisResult result={result} />}
-
+      {hasAnalyzed && result.submittedJD &&
+  (result.matched.length + result.missing.length > 0) && (
+    <button type="button" onClick={() => setRequiredSkills(result.matched.concat(result.missing).join(","))}>
+      将提取技能填入岗位要求
+    </button>
+  )}
       <section className="history-section">
         <h2>历史记录</h2>
 
