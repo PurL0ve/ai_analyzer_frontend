@@ -207,6 +207,53 @@ function App() {
   }
   const jdLines = jd.split(/\r?\n/)
 
+  const addedSkills = []
+  const removedSkills = []
+
+  if (originalExtractedSkills !== null) {
+    const originalKeys = new Set()
+    const currentKeys = new Set()
+    const addedKeys = new Set()
+    const removedKeys = new Set()
+
+      // 1. 用真实的原始提取结果建集合
+    for (const item of originalExtractedSkills) {
+      const name = item.trim()
+      if (name === "") continue
+
+      originalKeys.add(name.toLowerCase())
+    }
+
+    // 2. 算新增，同时记下当前输入的所有有效技能
+    const items = requiredSkills.split(",")
+
+    for (const item of items) {
+      const name = item.trim()
+      if (name === "") continue
+
+      const key = name.toLowerCase()
+      currentKeys.add(key)
+
+      if (!originalKeys.has(key) && !addedKeys.has(key)) {
+        addedSkills.push(name)
+        addedKeys.add(key)
+      }
+    }
+
+     // 3. 算移除，用上一段填好的 currentKeys 查找
+    for (const item of originalExtractedSkills) {
+      const name = item.trim()
+      if (name === "") continue
+
+      const key = name.toLowerCase()
+
+      if (!currentKeys.has(key) && !removedKeys.has(key)) {
+        removedSkills.push(name)
+        removedKeys.add(key)
+      }
+    }
+  }
+
   return (
     <div className="container">
       <h1 className="page-title">AI Skill Analyzer</h1>
@@ -278,6 +325,8 @@ function App() {
               </p>
             )
           })}
+          <p>新增技能：{addedSkills.length > 0 ? addedSkills.join("、") : "无"}</p>
+          <p>移除技能：{removedSkills.length > 0 ? removedSkills.join("、") : "无"}</p>
         </div>
       )}
 
