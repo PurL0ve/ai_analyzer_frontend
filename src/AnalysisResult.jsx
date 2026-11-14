@@ -12,6 +12,13 @@ function AnalysisResult(props){
 
   return (
     <div className = "result-box">
+      {result.submittedRequiredSkills?.length > 0 && (
+        <div>
+          <h2>本次匹配的岗位要求:</h2>
+          <p>{result.submittedRequiredSkills.join("、")}</p>
+        </div>
+      )}
+
       <h2>匹配技能:</h2>
       {result.matched.map((skill) => {
         const candidate = findJdCandidate(lines, skill)

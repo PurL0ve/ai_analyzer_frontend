@@ -230,6 +230,20 @@ label{
   cursor:pointer;
   margin-right:12px;
 }
+.skills-action-button {
+  margin-block: 8px;
+  padding: 8px 14px;
+  border: 1px solid #c7d2fe;
+  border-radius: 8px;
+  background-color: #eef2ff;
+  color: #3730a3;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.skills-action-button:hover {
+  background-color: #e0e7ff;
+}
 .history-button{
   width:120px;
   padding: 8px 16px;

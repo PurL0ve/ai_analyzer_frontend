@@ -78,7 +78,11 @@ function App() {
       const responseData = await response.json()
 
       setHasAnalyzed(true)
-      setResult(responseData.data)
+
+      setResult({
+        ...responseData.data,
+        submittedRequiredSkills: requiredSkillsList
+      })
     } catch (error) {
       setError("分析请求失败，请稍后重试")
       setHasAnalyzed(false)
@@ -327,6 +331,16 @@ function App() {
           })}
           <p>新增技能：{addedSkills.length > 0 ? addedSkills.join("、") : "无"}</p>
           <p>移除技能：{removedSkills.length > 0 ? removedSkills.join("、") : "无"}</p>
+          {(addedSkills.length > 0 || removedSkills.length > 0) && (
+            <button
+              className = "skills-action-button"
+              type = "button"
+              onClick={() =>{
+                setRequiredSkills(originalExtractedSkills.join(","))
+                setHasAnalyzed(false)
+              }}
+            >恢复提取结果</button>
+          )}
         </div>
       )}
 
@@ -357,13 +371,18 @@ function App() {
 
       <p className="error-message">{error}</p>
 
+      {hasAnalyzed &&
+        result.submittedJD &&
+        (result.matched.length + result.missing.length > 0) && (
+          <button
+            className="skills-action-button"
+            type="button"
+            onClick={() => setRequiredSkills(result.matched.concat(result.missing).join(","))}
+          >
+            将提取技能填入岗位要求
+          </button>
+        )}
       {hasAnalyzed && <AnalysisResult result={result} />}
-      {hasAnalyzed && result.submittedJD &&
-  (result.matched.length + result.missing.length > 0) && (
-    <button type="button" onClick={() => setRequiredSkills(result.matched.concat(result.missing).join(","))}>
-      将提取技能填入岗位要求
-    </button>
-  )}
       <section className="history-section">
         <h2>历史记录</h2>
 
